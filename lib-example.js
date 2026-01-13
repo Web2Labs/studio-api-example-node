@@ -1,16 +1,16 @@
 require('dotenv').config();
-const ShortcutClient = require('./index');
+const StudioClient = require('./index');
 const fs = require('fs');
 
-// This example shows how to integrate the Shortcut API into your own scripts
-// by importing the ShortcutClient class from index.js
+// This example shows how to integrate the Studio API into your own scripts
+// by importing the StudioClient class from index.js
 
 async function processVideoWorkflow(videoPath) {
     // 1. Initialize the client
-    const apiKey = process.env.SHORTCUT_API_KEY;
+    const apiKey = process.env.STUDIO_API_KEY || process.env.SHORTCUT_API_KEY;
     if (!apiKey) throw new Error("API Key not found");
 
-    const client = new ShortcutClient(apiKey);
+    const client = new StudioClient(apiKey);
 
     console.log(`Starting workflow for: ${videoPath}`);
 
@@ -25,7 +25,7 @@ async function processVideoWorkflow(videoPath) {
     const result = await client.pollStatus(project.projectId, true);
 
     // 4. Access results programmatically
-    if (result.status === 'Completed') {
+    if (String(result.status || '').toLowerCase() === 'completed') {
         const results = await client.getResults(project.projectId);
         return results;
     } else {

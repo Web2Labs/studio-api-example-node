@@ -5,7 +5,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const cliProgress = require('cli-progress');
 
-class ShortcutClient {
+class StudioClient {
     constructor(apiKey, baseUrl = 'https://web2labs.com') {
         this.apiKey = apiKey;
         this.baseUrl = baseUrl;
@@ -70,14 +70,15 @@ class ShortcutClient {
                     progressBar.update(percentage, { status: status, stage: stage });
                 }
 
-                if (status === 'Completed') {
+                const normalizedStatus = String(status || '').toLowerCase();
+                if (normalizedStatus === 'completed') {
                     if (showProgress && progressBar) {
                         progressBar.update(100, { status: status, stage: 'Done' });
                         progressBar.stop();
                         console.log('\nProcessing completed successfully!');
                     }
                     return data;
-                } else if (status === 'Failed') {
+                } else if (normalizedStatus === 'failed') {
                     if (showProgress && progressBar) progressBar.stop();
                     const errorMessage = data.error ? data.error.message : 'Unknown error';
                     throw new Error(`Processing failed: ${errorMessage}`);
@@ -115,12 +116,12 @@ class ShortcutClient {
 }
 
 async function main() {
-    const API_KEY = process.env.SHORTCUT_API_KEY;
-    const BASE_URL = process.env.SHORTCUT_API_URL;
+    const API_KEY = process.env.STUDIO_API_KEY || process.env.SHORTCUT_API_KEY;
+    const BASE_URL = process.env.STUDIO_API_URL || process.env.SHORTCUT_API_URL;
     let VIDEO_FILE_PATH = process.argv[2] || 'example_video.mp4';
 
     if (!API_KEY) {
-        console.error('Error: SHORTCUT_API_KEY environment variable not set.');
+        console.error('Error: STUDIO_API_KEY environment variable not set.');
         console.error('Please set your API key in a .env file or environment variable.');
         process.exit(1);
     }
@@ -132,7 +133,7 @@ async function main() {
     }
 
     try {
-        const client = new ShortcutClient(API_KEY, BASE_URL);
+        const client = new StudioClient(API_KEY, BASE_URL);
 
         // 1. Upload
         const projectData = await client.uploadVideo(VIDEO_FILE_PATH);
@@ -164,6 +165,30 @@ async function main() {
             console.log(`\nSubtitles: ${results.subtitles.url}`);
         }
 
+        if (results.thumbnails && results.thumbnails.length > 0) {
+            console.log(`\nThumbnails (${results.thumbnails.length}):`);
+            for (const t of results.thumbnails) {
+                if (!t.imageUrl) continue;
+                const ext = t.imageExt || 'png';
+                const variant = t.variant || 'A';
+                const absoluteUrl = String(t.imageUrl).startsWith('http')
+                    ? t.imageUrl
+                    : `${client.baseUrl}${t.imageUrl}`;
+
+                const outPath = path.join(
+                    process.cwd(),
+                    `${path.parse(VIDEO_FILE_PATH).name}_thumbnail_${variant}.${ext}`
+                );
+
+                const resp = await axios.get(absoluteUrl, {
+                    responseType: 'arraybuffer',
+                    headers: { 'X-API-Key': client.apiKey },
+                });
+                fs.writeFileSync(outPath, resp.data);
+                console.log(`- ${variant}: saved to ${outPath}`);
+            }
+        }
+
         console.log('\n' + '='.repeat(50));
 
     } catch (error) {
@@ -173,7 +198,7 @@ async function main() {
 }
 
 // Export the class
-module.exports = ShortcutClient;
+module.exports = StudioClient;
 
 // Run main if called directly
 if (require.main === module) {

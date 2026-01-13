@@ -1,6 +1,6 @@
-# Shortcut API Node.js Example
+# Studio API Node.js Example
 
-Welcome to the Shortcut API Node.js example! This project demonstrates how to programmatically access Shortcut's video editing automation features using Node.js.
+Welcome to the Studio API Node.js example! This project demonstrates how to programmatically access Studio's video editing automation features using Node.js.
 
 ## 🚀 Features
 
@@ -11,9 +11,8 @@ Welcome to the Shortcut API Node.js example! This project demonstrates how to pr
 ## 📋 Prerequisites
 
 - **Node.js 16+** installed on your machine.
-- **API Key**: You need a Web2Labs Shortcut API key.
-  - Go to [Web2Labs Shortcut](https://web2labs.com/shortcut)
-  - Switch to **API Mode** in the dashboard.
+- **API Key**: You need a Web2Labs Studio API key.
+  - Go to `https://web2labs.com/docs-api`
   - Generate your API key.
 
 ## 🛠️ Installation
@@ -28,7 +27,7 @@ Welcome to the Shortcut API Node.js example! This project demonstrates how to pr
 3.  **Set up your API Key**:
     Create a `.env` file in this directory and add your key:
     ```env
-    SHORTCUT_API_KEY=sk_live_YOUR_ACTUAL_API_KEY_HERE
+    STUDIO_API_KEY=sk_live_YOUR_ACTUAL_API_KEY_HERE
     ```
     *(Alternatively, you can set it as a system environment variable)*
 
@@ -46,7 +45,7 @@ node index.js path/to/your/video.mp4
 
 ### What happens next?
 
-1.  **Upload**: The script uploads your video to the Shortcut secure worker cloud.
+1.  **Upload**: The script uploads your video to the Studio secure processing cloud.
 2.  **Processing**: You'll see a progress bar as our AI analyzes, cuts, and edits your video.
     ```
     Tracking progress for project proj_abc123...
@@ -63,16 +62,16 @@ node index.js path/to/your/video.mp4
 
 ## 🔌 Library Integration
 
-Want to use this in your own existing Node.js script? You can import the `ShortcutClient` class!
+Want to use this in your own existing Node.js script? You can import the client class!
 
-1.  Copy `index.js` to your project (you might want to rename it to `ShortcutClient.js`).
+1.  Copy `index.js` to your project (or import it directly).
 2.  Import and use it:
 
 ```javascript
-const ShortcutClient = require('./ShortcutClient');
+const StudioClient = require('./index');
 
 // Initialize
-const client = new ShortcutClient("YOUR_API_KEY");
+const client = new StudioClient("YOUR_API_KEY");
 
 async function run() {
     // Upload
@@ -93,7 +92,10 @@ Check `lib-example.js` for a complete example.
 
 ## 📚 API Documentation
 
-For complete API reference, including all available configuration options (like generating shorts, subtitles, or using premium cuts), visit our [Official API Docs](https://web2labs.com/docs/api).
+For complete API reference (including thumbnails), visit:
+- Scalar UI: `https://web2labs.com/api/v1/reference`
+- Swagger UI: `https://web2labs.com/api/v1/docs`
+- OpenAPI JSON: `https://web2labs.com/api/v1/openapi.json`
 
 ## 🤝 Contributing & Support
 

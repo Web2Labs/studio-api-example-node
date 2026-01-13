@@ -1,13 +1,13 @@
 {
-  "name": "shortcut-api-node-example",
+  "name": "studio-api-node-example",
   "version": "1.0.0",
-  "description": "Example project for the Web2Labs Shortcut API using Node.js",
+  "description": "Example project for the Web2Labs Studio API using Node.js",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "keywords": [
-    "shortcut",
+    "studio",
     "api",
     "video",
     "editing",
